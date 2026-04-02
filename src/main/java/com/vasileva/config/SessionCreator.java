@@ -1,6 +1,7 @@
 package com.vasileva.config;
 
 import com.vasileva.entity.Actor;
+import com.vasileva.entity.Category;
 import com.vasileva.entity.Film;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,6 +15,7 @@ public class SessionCreator {
         Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
         configuration.addAnnotatedClass(Film.class);
         configuration.addAnnotatedClass(Actor.class);
+        configuration.addAnnotatedClass(Category.class);
         sessionFactory = configuration.buildSessionFactory();
     }
 

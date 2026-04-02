@@ -2,6 +2,7 @@ package com.vasileva;
 
 import com.vasileva.config.SessionCreator;
 import com.vasileva.entity.Actor;
+import com.vasileva.entity.Category;
 import com.vasileva.entity.Film;
 import org.hibernate.Session;
 
@@ -19,6 +20,8 @@ public class Main {
         System.out.println(actor);
         List<Film> films = actor.getFilms();
         films.forEach(System.out::println);
+        List<Category> categories = film.getCategories();
+        categories.forEach(System.out::println);
         session.getTransaction().commit();
 
 
