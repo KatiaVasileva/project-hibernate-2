@@ -4,6 +4,7 @@ import com.vasileva.config.SessionCreator;
 import com.vasileva.entity.Actor;
 import com.vasileva.entity.Category;
 import com.vasileva.entity.Film;
+import com.vasileva.entity.FilmText;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class Main {
         films.forEach(System.out::println);
         List<Category> categories = film.getCategories();
         categories.forEach(System.out::println);
+        FilmText text = session.find(FilmText.class, 1);
+        System.out.println(text);
         session.getTransaction().commit();
 
 
