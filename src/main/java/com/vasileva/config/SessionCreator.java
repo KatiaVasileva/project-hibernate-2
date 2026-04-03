@@ -1,9 +1,6 @@
 package com.vasileva.config;
 
-import com.vasileva.entity.Actor;
-import com.vasileva.entity.Category;
-import com.vasileva.entity.Film;
-import com.vasileva.entity.FilmText;
+import com.vasileva.entity.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -18,6 +15,16 @@ public class SessionCreator {
         configuration.addAnnotatedClass(Actor.class);
         configuration.addAnnotatedClass(Category.class);
         configuration.addAnnotatedClass(FilmText.class);
+        configuration.addAnnotatedClass(Language.class);
+        configuration.addAnnotatedClass(Country.class);
+        configuration.addAnnotatedClass(City.class);
+        configuration.addAnnotatedClass(Address.class);
+        configuration.addAnnotatedClass(Store.class);
+        configuration.addAnnotatedClass(Staff.class);
+        configuration.addAnnotatedClass(Customer.class);
+        configuration.addAnnotatedClass(Inventory.class);
+        configuration.addAnnotatedClass(Rental.class);
+        configuration.addAnnotatedClass(Payment.class);
         sessionFactory = configuration.buildSessionFactory();
     }
 

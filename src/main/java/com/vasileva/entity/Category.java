@@ -19,9 +19,9 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
-    private byte id;
+    private Byte id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 25)
     private String name;
 
     @Column(name = "last_update", nullable = false)

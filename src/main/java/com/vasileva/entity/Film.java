@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@ToString(exclude = {"actors", "categories"})
+@ToString(exclude = {"actors", "categories", "inventory"})
 
 @Entity
 @Table(name = "film")
@@ -25,9 +25,9 @@ public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "film_id")
-    private short id;
+    private Short id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 128)
     private String title;
 
     private String description;
@@ -35,11 +35,13 @@ public class Film {
     @Column(name = "release_year", columnDefinition = "YEAR")
     private Year releaseYear;
 
-    @Column(name = "language_id", nullable = false)
-    private byte languageId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id", nullable = false)
+    private Language language;
 
-    @Column(name = "original_language_id")
-    private Byte originalLanguageId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "original_language_id")
+    private Language originalLanguage;
 
     @Column(name = "rental_duration", nullable = false)
     private byte rentalDuration = 3;
@@ -78,4 +80,8 @@ public class Film {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
+
+    @OneToMany(mappedBy = "film")
+    private List<Inventory> inventory;
+
 }

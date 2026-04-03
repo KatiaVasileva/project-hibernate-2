@@ -15,7 +15,7 @@ import lombok.*;
 public class FilmText {
     @Id
     @Column(name = "film_id")
-    private short filmId;
+    private Short filmId;
 
     @Column(nullable = false)
     private String title;
