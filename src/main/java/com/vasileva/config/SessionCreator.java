@@ -5,7 +5,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class SessionCreator {
+import java.io.Closeable;
+
+public class SessionCreator implements Closeable {
 
     private final SessionFactory sessionFactory;
 
@@ -30,5 +32,10 @@ public class SessionCreator {
 
     public Session getSession() {
         return sessionFactory.openSession();
+    }
+
+    @Override
+    public void close() {
+        sessionFactory.close();
     }
 }
