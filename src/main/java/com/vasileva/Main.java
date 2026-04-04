@@ -2,7 +2,6 @@ package com.vasileva;
 
 import com.vasileva.config.NanoSpring;
 import com.vasileva.dto.CustomerCreationRequest;
-import com.vasileva.entity.*;
 import com.vasileva.service.CustomerService;
 
 public class Main {
@@ -23,8 +22,10 @@ public class Main {
                 .phone("123456789")
                 .build();
 
-        Customer savedCustomer = customerService.createCustomer(request);
-        System.out.println("Покупатель успешно создан с ID: " + savedCustomer.getId());
+        customerService.createCustomer(request);
+
+        customerService.returnRentedFilm(146, 21);
+
 
     }
 }
