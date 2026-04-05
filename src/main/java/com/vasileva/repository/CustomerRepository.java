@@ -50,20 +50,26 @@ public class CustomerRepository {
                 throw new IllegalArgumentException("Rental with ID " + rentalId + " not found");
             }
 
-            rental.setReturnDate(LocalDateTime.now());
-            rental.setLastUpdate(LocalDateTime.now());
+            if (rental.getReturnDate() == null) {
+                rental.setReturnDate(LocalDateTime.now());
+                rental.setLastUpdate(LocalDateTime.now());
 
-            session.merge(rental);
+                session.merge(rental);
+
+                System.out.println("Film successfully returned by customer ID: " + customerId +
+                        ", rental ID: " + rentalId);
+            } else {
+                System.out.println("Film has already been returned on " + rental.getReturnDate());
+            }
             transaction.commit();
-
-            System.out.println("Film successfully returned by customer ID: " + customerId +
-                    ", rental ID: " + rentalId);
 
         } catch (Exception e) {
             transaction.rollback();
             throw e;
         }
     }
+
+
 
     private City findCityWithCountry(Session session, String cityName, String countryName) {
         City city = session.createQuery(
