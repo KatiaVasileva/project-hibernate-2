@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class CustomerRepository {
@@ -69,6 +70,59 @@ public class CustomerRepository {
         }
     }
 
+    @Transactional
+    public void rentInventory(int customerId, int inventoryId, int staffId) {
+        Session session = sessionCreator.getSession();
+        Transaction transaction = session.beginTransaction();
+        Rental rental;
+
+        try (session) {
+            Customer customer = session.get(Customer.class, customerId);
+            if (customer == null) {
+                throw new IllegalArgumentException("Customer with ID " + customerId + " not found");
+            }
+
+            Staff staff = session.get(Staff.class, staffId);
+            if (staff == null) {
+                throw new IllegalArgumentException("Staff with ID " + staffId + " not found");
+            }
+
+            Inventory inventory = session.get(Inventory.class, inventoryId);
+            if (inventory == null) {
+                throw new IllegalArgumentException("Inventory with ID " + inventoryId + " not found");
+            }
+
+            if (isInventoryAvailable(session, inventoryId)) {
+                rental = Rental.builder()
+                        .rentalDate(LocalDateTime.now())
+                        .customer(customer)
+                        .staff(staff)
+                        .inventory(inventory)
+                        .lastUpdate(LocalDateTime.now())
+                        .build();
+                session.persist(rental);
+
+                Payment payment = Payment.builder()
+                        .customer(customer)
+                        .staff(staff)
+                        .rental(rental)
+                        .amount(BigDecimal.valueOf(4.99))
+                        .paymentDate(LocalDateTime.now())
+                        .lastUpdate(LocalDateTime.now())
+                        .build();
+                session.persist(payment);
+                System.out.println("Inventory rented successfully");
+            } else {
+                System.out.println("Inventory is currently rented and not available");
+            }
+
+            transaction.commit();
+
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        }
+    }
 
 
     private City findCityWithCountry(Session session, String cityName, String countryName) {
@@ -124,5 +178,15 @@ public class CustomerRepository {
 
         session.persist(customer);
         return customer;
+    }
+
+    private boolean isInventoryAvailable(Session session, int inventoryId) {
+        Rental latestRental = session.createQuery(
+                        "select r from Rental r where inventory.id = :inventoryId " +
+                                "order by rentalDate desc", Rental.class)
+                .setParameter("inventoryId", inventoryId)
+                .setMaxResults(1)
+                .uniqueResult();
+        return latestRental == null || latestRental.getReturnDate() != null;
     }
 }

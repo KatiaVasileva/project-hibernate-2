@@ -17,4 +17,8 @@ public class CustomerService {
     public void returnRentedFilm(int customerId, int rentalId) {
         customerRepository.returnRentedFilm(customerId, rentalId);
     }
+
+    public void rentInventory(int customerId, int inventoryId, int staffId) {
+        customerRepository.rentInventory(customerId, inventoryId, staffId);
+    }
 }

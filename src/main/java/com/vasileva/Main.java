@@ -24,7 +24,9 @@ public class Main {
 
         customerService.createCustomer(request);
 
-        customerService.returnRentedFilm(146, 21);
+        customerService.returnRentedFilm(5, 13209);
+
+        customerService.rentInventory(1, 12, 1);
 
 
     }
