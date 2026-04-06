@@ -2,6 +2,7 @@ package com.vasileva.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 @ToString(exclude = {"payments", "rentals"})
 
 @Entity
-@Table(name = "customer")
+@Table(schema = "movie", name = "customer")
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +46,7 @@ public class Customer {
     private LocalDateTime createDate;
 
     @Column(name = "last_update")
+    @UpdateTimestamp
     private LocalDateTime lastUpdate;
 
     @OneToMany(mappedBy = "customer")

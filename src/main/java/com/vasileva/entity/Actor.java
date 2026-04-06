@@ -2,6 +2,7 @@ package com.vasileva.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -14,7 +15,7 @@ import java.util.Set;
 @ToString
 
 @Entity
-@Table(name = "actor")
+@Table(schema = "movie", name = "actor")
 public class Actor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +29,7 @@ public class Actor {
     private String lastName;
 
     @Column(name = "last_update", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime lastUpdate;
 
     @ManyToMany(fetch = FetchType.LAZY)

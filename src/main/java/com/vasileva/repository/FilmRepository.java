@@ -68,7 +68,6 @@ public class FilmRepository {
                     .rating(rating)
                     .language(language)
                     .length(length)
-                    .lastUpdate(LocalDateTime.now())
                     .specialFeatures(specialFeatures)
                     .build();
             session.persist(film);
@@ -100,7 +99,6 @@ public class FilmRepository {
                 Inventory inventory = Inventory.builder()
                         .film(film)
                         .store(store)
-                        .lastUpdate(LocalDateTime.now())
                         .build();
                 session.persist(inventory);
             }

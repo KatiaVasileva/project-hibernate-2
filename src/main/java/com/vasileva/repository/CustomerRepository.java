@@ -53,7 +53,6 @@ public class CustomerRepository {
 
             if (rental.getReturnDate() == null) {
                 rental.setReturnDate(LocalDateTime.now());
-                rental.setLastUpdate(LocalDateTime.now());
 
                 session.merge(rental);
 
@@ -98,17 +97,22 @@ public class CustomerRepository {
                         .customer(customer)
                         .staff(staff)
                         .inventory(inventory)
-                        .lastUpdate(LocalDateTime.now())
                         .build();
                 session.persist(rental);
+
+                BigDecimal rental_rate = session.createQuery(
+                        "select f.rentalRate " +
+                                "from Inventory inv join inv.film f " +
+                                "where inv.id = :inventoryID", BigDecimal.class)
+                        .setParameter("inventoryID", inventoryId)
+                        .uniqueResult();
 
                 Payment payment = Payment.builder()
                         .customer(customer)
                         .staff(staff)
                         .rental(rental)
-                        .amount(BigDecimal.valueOf(4.99))
+                        .amount(rental_rate)
                         .paymentDate(LocalDateTime.now())
-                        .lastUpdate(LocalDateTime.now())
                         .build();
                 session.persist(payment);
                 System.out.println("Inventory rented successfully");
@@ -123,7 +127,6 @@ public class CustomerRepository {
             throw e;
         }
     }
-
 
     private City findCityWithCountry(Session session, String cityName, String countryName) {
         City city = session.createQuery(
@@ -152,7 +155,6 @@ public class CustomerRepository {
                     .city(city)
                     .postalCode(request.getPostalCode())
                     .phone(request.getPhone())
-                    .lastUpdate(LocalDateTime.now())
                     .build();
             session.persist(address);
         }
@@ -167,7 +169,6 @@ public class CustomerRepository {
                 .address(address)
                 .active(true)
                 .createDate(LocalDateTime.now())
-                .lastUpdate(LocalDateTime.now())
                 .build();
 
         Store store = session.find(Store.class, request.getStoreId());

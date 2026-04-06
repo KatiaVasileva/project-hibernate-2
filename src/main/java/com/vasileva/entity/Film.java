@@ -4,6 +4,7 @@ import com.vasileva.entity.converter.RatingConverter;
 import com.vasileva.entity.converter.SpecialFeatureConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ import java.util.Set;
 @ToString(exclude = {"actors", "categories", "inventory"})
 
 @Entity
-@Table(name = "film")
+@Table(schema = "movie", name = "film")
 public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +31,7 @@ public class Film {
     @Column(nullable = false, length = 128)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "release_year", columnDefinition = "YEAR")
@@ -63,6 +65,7 @@ public class Film {
     private Set<SpecialFeature> specialFeatures = new HashSet<>();
 
     @Column(name = "last_update", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime lastUpdate;
 
     @ManyToMany

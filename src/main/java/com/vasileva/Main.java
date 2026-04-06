@@ -34,9 +34,9 @@ public class Main {
 
         customerService.createCustomer(request);
 
-        customerService.returnRentedFilm(5, 13209);
+        customerService.returnRentedFilm(1, 16064);
 
-        customerService.rentInventory(1, 12, 1);
+        customerService.rentInventory(1, 17, 1);
 
         List<Integer> actorIds = Arrays.asList(1, 2, 3);
         int categoryId = 5;

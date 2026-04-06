@@ -11,7 +11,7 @@ import lombok.*;
 @ToString(exclude = "film")
 
 @Entity
-@Table(name = "film_text")
+@Table(schema = "movie", name = "film_text")
 public class FilmText {
     @Id
     @Column(name = "film_id")
