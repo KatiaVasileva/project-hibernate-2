@@ -2,6 +2,7 @@ package com.vasileva;
 
 import com.vasileva.config.NanoSpring;
 import com.vasileva.dto.CustomerCreationRequest;
+import com.vasileva.dto.FilmCreationRequest;
 import com.vasileva.entity.Rating;
 import com.vasileva.entity.SpecialFeature;
 import com.vasileva.service.CustomerService;
@@ -43,19 +44,21 @@ public class Main {
         int languageId = 1;
         String year = "2024";
         Set<SpecialFeature> specialFeatures = Set.of(SpecialFeature.TRAILERS);
-        filmService.addNewFilm(
-                "Cyber Guardians",
-                "In a futuristic world overrun by AI, a group of hackers fights to restore human control.",
-                Year.parse(year),
-                (byte) 3,
-                BigDecimal.valueOf(4.99),
-                BigDecimal.valueOf(19.99),
-                Rating.PG13,
-                actorIds,
-                categoryId,
-                languageId,
-                (short) 100,
-                specialFeatures
-        );
+        FilmCreationRequest filmCreationRequest = FilmCreationRequest.builder()
+                .title("Cyber Guardians")
+                .description("In a futuristic world overrun by AI, a group of hackers fights to restore human control.")
+                .releaseYear(Year.parse(year))
+                .rentalDuration((byte) 3)
+                .rentalRate(BigDecimal.valueOf(4.99))
+                .replacementCost(BigDecimal.valueOf(19.99))
+                .rating(Rating.PG13)
+                .actorIds(actorIds)
+                .categoryId(categoryId)
+                .languageId(languageId)
+                .length((short) 100)
+                .specialFeatures(specialFeatures)
+                .build();
+
+        filmService.addNewFilm(filmCreationRequest);
     }
 }

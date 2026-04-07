@@ -34,6 +34,7 @@ public class CustomerService {
         this.paymentRepository = paymentRepository;
     }
 
+    @Transactional
     public void createCustomer(CustomerCreationRequest request) {
         City city = cityRepository.findCityWithCountry(request.getCity(), request.getCountry());
         Address address = addressRepository.findOrCreateAddress(request, city);
@@ -41,13 +42,14 @@ public class CustomerService {
         System.out.println("Customer successfully created with ID: " + customer.getId());
     }
 
+    @Transactional
     public void returnRentedFilm(int rentalId) {
         Rental rental = rentalRepository.get(rentalId);
         rentalRepository.updateReturnDate(rental);
     }
 
+    @Transactional
     public void rentInventory(int customerId, int inventoryId, int staffId) {
-
         Customer customer = customerRepository.get(customerId);
         Staff staff = staffRepository.get(staffId);
         Inventory inventory = inventoryRepository.get(inventoryId);

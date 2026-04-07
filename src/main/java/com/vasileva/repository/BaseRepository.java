@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.hibernate.Session;
 
+import java.util.List;
 import java.util.Optional;
 
 public class BaseRepository<T> implements Repository<T> {
@@ -22,6 +23,12 @@ public class BaseRepository<T> implements Repository<T> {
         return Optional.ofNullable(session.get(entityClass, id))
                 .orElseThrow(() -> new EntityNotFoundException("Entity with ID " + id + " not found"));
 
+    }
+
+    @Override
+    public List<T> getAll() {
+        Session session = sessionCreator.getSession();
+        return session.createQuery("SELECT e FROM %s e".formatted(entityClass.getName()), entityClass).list();
     }
 
     @Transactional

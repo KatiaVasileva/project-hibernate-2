@@ -1,47 +1,55 @@
 package com.vasileva.service;
 
-import com.vasileva.entity.Rating;
-import com.vasileva.entity.SpecialFeature;
-import com.vasileva.repository.FilmRepository;
+import com.vasileva.dto.FilmCreationRequest;
+import com.vasileva.entity.*;
+import com.vasileva.repository.*;
+import jakarta.transaction.Transactional;
 
-import java.math.BigDecimal;
-import java.time.Year;
 import java.util.List;
-import java.util.Set;
 
+@Transactional
 public class FilmService {
     private final FilmRepository filmRepository;
+    private final LanguageRepository languageRepository;
+    private final CategoryRepository categoryRepository;
+    private final StoreRepository storeRepository;
+    private final InventoryRepository inventoryRepository;
 
-    public FilmService(FilmRepository filmRepository) {
+    public FilmService(FilmRepository filmRepository,
+                       LanguageRepository languageRepository,
+                       CategoryRepository categoryRepository,
+                       StoreRepository storeRepository,
+                       InventoryRepository inventoryRepository) {
         this.filmRepository = filmRepository;
+        this.languageRepository = languageRepository;
+        this.categoryRepository = categoryRepository;
+        this.storeRepository = storeRepository;
+        this.inventoryRepository = inventoryRepository;
     }
 
-    public void addNewFilm(
-            String title,
-            String description,
-            Year releaseYear,
-            byte rentalDuration,
-            BigDecimal rentalRate,
-            BigDecimal replacementCost,
-            Rating rating,
-            List<Integer> actorIds,
-            int categoryId,
-            int languageId,
-            short length,
-            Set<SpecialFeature> specialFeatures
-    ) {
-        filmRepository.addNewFilm(
-                title,
-                description,
-                releaseYear,
-                rentalDuration,
-                rentalRate,
-                replacementCost,
-                rating,
-                actorIds,
-                categoryId,
-                languageId,
-                length,
-                specialFeatures);
+    @Transactional
+    public void addNewFilm(FilmCreationRequest request) {
+        Language language = languageRepository.get(request.getLanguageId());
+        Category category = categoryRepository.get(request.getCategoryId());
+
+        Film film = filmRepository.createFilm(request, language);
+
+        List<Integer> actorsIds = request.getActorIds();
+        if (actorsIds != null && !actorsIds.isEmpty()) {
+            filmRepository.createActorsForFilm(actorsIds, film.getId());
+        }
+
+        filmRepository.createCategoryForFilm(film.getId(), category.getId());
+
+        List<Store> stores = storeRepository.getAll();
+        for (Store store : stores) {
+            inventoryRepository.createInventory(film, store);
+        }
+
+        System.out.println("New film added successfully:");
+        System.out.println("- Title: " + film.getTitle());
+        System.out.println("- Film ID: " + film.getId());
+        System.out.println("- Language: " + film.getLanguage().getName());
+        System.out.println("- Available in " + stores.size() + " stores");
     }
 }
