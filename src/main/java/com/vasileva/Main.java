@@ -20,23 +20,23 @@ public class Main {
         FilmService filmService = NanoSpring.find(FilmService.class);
 
         CustomerCreationRequest request = CustomerCreationRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .address("Broadway 5")
-                .city("Moscow")
+                .firstName("Mary")
+                .lastName("Smith")
+                .email("mary.smith@example.com")
+                .address("Broadway 15")
+                .city("Baku")
                 .postalCode("123456")
-                .country("Russian Federation")
-                .storeId((short) 1)
-                .district("Moscow")
+                .country("Azerbaijan")
+                .storeId((short) 2)
+                .district("2")
                 .phone("123456789")
                 .build();
 
         customerService.createCustomer(request);
 
-        customerService.returnRentedFilm(1, 16064);
+        customerService.returnRentedFilm(16068);
 
-        customerService.rentInventory(1, 17, 1);
+        customerService.rentInventory(1, 20, 1);
 
         List<Integer> actorIds = Arrays.asList(1, 2, 3);
         int categoryId = 5;

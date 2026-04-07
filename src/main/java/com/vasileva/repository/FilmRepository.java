@@ -12,11 +12,10 @@ import java.time.Year;
 import java.util.List;
 import java.util.Set;
 
-public class FilmRepository {
-    private final SessionCreator sessionCreator;
+public class FilmRepository extends BaseRepository<Film> {
 
     public FilmRepository(SessionCreator sessionCreator) {
-        this.sessionCreator = sessionCreator;
+        super(sessionCreator, Film.class);
     }
 
     @Transactional
@@ -34,7 +33,7 @@ public class FilmRepository {
             short length,
             Set<SpecialFeature> specialFeatures
     ) {
-        Session session = sessionCreator.getSession();
+        Session session = getCurrentSession();
         Transaction transaction = session.beginTransaction();
         Film film;
 
@@ -117,5 +116,16 @@ public class FilmRepository {
             transaction.rollback();
             throw e;
         }
+    }
+
+    public BigDecimal getRentalRate(int inventoryId) {
+        Session session = getCurrentSession();
+        BigDecimal rentalRate = session.createQuery(
+                        "SELECT f.rentalRate " +
+                                "FROM Inventory inv JOIN inv.film f " +
+                                "WHERE inv.id = :inventoryID", BigDecimal.class)
+                .setParameter("inventoryID", inventoryId)
+                .uniqueResult();
+        return rentalRate != null ?  rentalRate : BigDecimal.valueOf(4.99);
     }
 }

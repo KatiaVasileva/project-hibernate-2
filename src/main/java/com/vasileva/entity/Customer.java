@@ -2,6 +2,7 @@ package com.vasileva.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -43,6 +44,7 @@ public class Customer {
     private boolean active = true;
 
     @Column(name = "create_date", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createDate;
 
     @Column(name = "last_update")
