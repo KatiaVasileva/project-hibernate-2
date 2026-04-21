@@ -23,7 +23,9 @@ public class CustomerService {
                            AddressRepository addressRepository,
                            RentalRepository rentalRepository,
                            StaffRepository staffRepository,
-                           InventoryRepository inventoryRepository, FilmRepository filmRepository, PaymentRepository paymentRepository) {
+                           InventoryRepository inventoryRepository,
+                           FilmRepository filmRepository,
+                           PaymentRepository paymentRepository) {
         this.customerRepository = customerRepository;
         this.cityRepository = cityRepository;
         this.addressRepository = addressRepository;
