@@ -15,7 +15,7 @@ public class CityRepository extends BaseRepository<City> {
     }
 
     public City findCityWithCountry(String cityName, String countryName) {
-        Session session = getCurrentSession();
+        Session session = getSession();
         Query<City> query = session.createQuery(
                         "select c from City c " +
                                 "join fetch c.country co  " +

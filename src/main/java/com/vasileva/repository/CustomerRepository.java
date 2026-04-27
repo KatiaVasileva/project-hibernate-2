@@ -4,9 +4,7 @@ import com.vasileva.config.SessionCreator;
 import com.vasileva.dto.CustomerCreationRequest;
 import com.vasileva.entity.*;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 public class CustomerRepository extends BaseRepository<Customer> {
 
@@ -14,10 +12,8 @@ public class CustomerRepository extends BaseRepository<Customer> {
         super(sessionCreator, Customer.class);
     }
 
-    @Transactional
     public Customer createCustomer(CustomerCreationRequest request, Address address) {
-        Session session = getCurrentSession();
-        Transaction transaction = session.beginTransaction();
+        Session session = getSession();
         Customer customer = Customer.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -33,7 +29,6 @@ public class CustomerRepository extends BaseRepository<Customer> {
         customer.setStore(store);
         session.persist(customer);
         session.flush();
-        transaction.commit();
         return customer;
     }
 }

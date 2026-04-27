@@ -1,5 +1,6 @@
 package com.vasileva.service;
 
+import com.vasileva.config.TransactionExecutor;
 import com.vasileva.dto.FilmCreationRequest;
 import com.vasileva.entity.*;
 import com.vasileva.repository.*;
@@ -9,17 +10,20 @@ import java.util.List;
 
 @Transactional
 public class FilmService {
+    private final TransactionExecutor transactionExecutor;
     private final FilmRepository filmRepository;
     private final LanguageRepository languageRepository;
     private final CategoryRepository categoryRepository;
     private final StoreRepository storeRepository;
     private final InventoryRepository inventoryRepository;
 
-    public FilmService(FilmRepository filmRepository,
+    public FilmService(TransactionExecutor transactionExecutor,
+                       FilmRepository filmRepository,
                        LanguageRepository languageRepository,
                        CategoryRepository categoryRepository,
                        StoreRepository storeRepository,
                        InventoryRepository inventoryRepository) {
+        this.transactionExecutor = transactionExecutor;
         this.filmRepository = filmRepository;
         this.languageRepository = languageRepository;
         this.categoryRepository = categoryRepository;
@@ -27,29 +31,30 @@ public class FilmService {
         this.inventoryRepository = inventoryRepository;
     }
 
-    @Transactional
     public void addNewFilm(FilmCreationRequest request) {
-        Language language = languageRepository.get(request.getLanguageId());
-        Category category = categoryRepository.get(request.getCategoryId());
+        transactionExecutor.execute(() -> {
+            Language language = languageRepository.get(request.getLanguageId());
+            Category category = categoryRepository.get(request.getCategoryId());
 
-        Film film = filmRepository.createFilm(request, language);
+            Film film = filmRepository.createFilm(request, language);
 
-        List<Integer> actorsIds = request.getActorIds();
-        if (actorsIds != null && !actorsIds.isEmpty()) {
-            filmRepository.createActorsForFilm(actorsIds, film.getId());
-        }
+            List<Integer> actorsIds = request.getActorIds();
+            if (actorsIds != null && !actorsIds.isEmpty()) {
+                filmRepository.createActorsForFilm(actorsIds, film.getId());
+            }
 
-        filmRepository.createCategoryForFilm(film.getId(), category.getId());
+            filmRepository.createCategoryForFilm(film.getId(), category.getId());
 
-        List<Store> stores = storeRepository.getAll();
-        for (Store store : stores) {
-            inventoryRepository.createInventory(film, store);
-        }
+            List<Store> stores = storeRepository.getAll();
+            for (Store store : stores) {
+                inventoryRepository.createInventory(film, store);
+            }
 
-        System.out.println("New film added successfully:");
-        System.out.println("- Title: " + film.getTitle());
-        System.out.println("- Film ID: " + film.getId());
-        System.out.println("- Language: " + film.getLanguage().getName());
-        System.out.println("- Available in " + stores.size() + " stores");
+            System.out.println("New film added successfully:");
+            System.out.println("- Title: " + film.getTitle());
+            System.out.println("- Film ID: " + film.getId());
+            System.out.println("- Language: " + film.getLanguage().getName());
+            System.out.println("- Available in " + stores.size() + " stores");
+        });
     }
 }

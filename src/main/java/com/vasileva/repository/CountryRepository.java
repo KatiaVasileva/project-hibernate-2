@@ -14,7 +14,7 @@ public class CountryRepository extends BaseRepository<Country> {
     }
 
     public Country getByName(String countryName) {
-        Session session = getCurrentSession();
+        Session session = getSession();
         Country country = session.createQuery(
                         "select co from Country co where co.country = :countryName", Country.class)
                 .setParameter("countryName", countryName)

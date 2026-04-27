@@ -31,12 +31,13 @@ public class SessionCreator implements Closeable {
         configuration.addAnnotatedClass(Rental.class);
         configuration.addAnnotatedClass(Staff.class);
         configuration.addAnnotatedClass(Store.class);
+        configuration.setProperty("hibernate.current_session_context_class", "thread");
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         sessionFactory = configuration.buildSessionFactory();
     }
 
-    public Session getSession() {
-        return sessionFactory.openSession();
+    public Session getCurrentSession() {
+        return sessionFactory.getCurrentSession();
     }
 
     public void close() {

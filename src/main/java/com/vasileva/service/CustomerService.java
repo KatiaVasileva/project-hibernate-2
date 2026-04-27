@@ -1,5 +1,6 @@
 package com.vasileva.service;
 
+import com.vasileva.config.TransactionExecutor;
 import com.vasileva.dto.CustomerCreationRequest;
 import com.vasileva.entity.*;
 import com.vasileva.repository.*;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 
 @Transactional
 public class CustomerService {
+    private final TransactionExecutor transactionExecutor;
     private final CustomerRepository customerRepository;
     private final CityRepository cityRepository;
     private final AddressRepository addressRepository;
@@ -18,7 +20,8 @@ public class CustomerService {
     private final FilmRepository filmRepository;
     private final PaymentRepository paymentRepository;
 
-    public CustomerService(CustomerRepository customerRepository,
+    public CustomerService(TransactionExecutor transactionExecutor,
+                           CustomerRepository customerRepository,
                            CityRepository cityRepository,
                            AddressRepository addressRepository,
                            RentalRepository rentalRepository,
@@ -26,6 +29,7 @@ public class CustomerService {
                            InventoryRepository inventoryRepository,
                            FilmRepository filmRepository,
                            PaymentRepository paymentRepository) {
+        this.transactionExecutor = transactionExecutor;
         this.customerRepository = customerRepository;
         this.cityRepository = cityRepository;
         this.addressRepository = addressRepository;
@@ -36,35 +40,40 @@ public class CustomerService {
         this.paymentRepository = paymentRepository;
     }
 
-    @Transactional
     public void createCustomer(CustomerCreationRequest request) {
-        City city = cityRepository.findCityWithCountry(request.getCity(), request.getCountry());
-        Address address = addressRepository.findOrCreateAddress(request, city);
-        Customer customer = customerRepository.createCustomer(request, address);
-        System.out.println("Customer successfully created with ID: " + customer.getId());
+        transactionExecutor.execute(() -> {
+            City city = cityRepository.findCityWithCountry(request.getCity(), request.getCountry());
+            Address address = addressRepository.findOrCreateAddress(request, city);
+            Customer customer = customerRepository.createCustomer(request, address);
+            System.out.println("Customer successfully created with ID: " + customer.getId());
+        });
     }
 
-    @Transactional
     public void returnRentedFilm(int rentalId) {
-        Rental rental = rentalRepository.get(rentalId);
-        rentalRepository.updateReturnDate(rental);
+        transactionExecutor.execute(() -> {
+            Rental rental = rentalRepository.get(rentalId);
+            rentalRepository.updateReturnDate(rental);
+        });
     }
 
-    @Transactional
     public void rentInventory(int customerId, int inventoryId, int staffId) {
-        Customer customer = customerRepository.get(customerId);
-        Staff staff = staffRepository.get(staffId);
-        Inventory inventory = inventoryRepository.get(inventoryId);
+        transactionExecutor.execute(() -> {
+            Customer customer = customerRepository.get(customerId);
+            Staff staff = staffRepository.get(staffId);
+            Inventory inventory = inventoryRepository.get(inventoryId);
 
-        if (inventoryRepository.isInventoryAvailable(inventoryId)) {
-            Rental rental = rentalRepository.createRental(customer, staff, inventory);
-            BigDecimal rentalRate = filmRepository.getRentalRate(inventoryId);
-            paymentRepository.createPayment(customer, staff, rental, rentalRate);
-            System.out.println("Inventory rented successfully");
-        } else {
-            System.out.println("Inventory is currently rented and not available");
-        }
+            if (inventoryRepository.isInventoryAvailable(inventoryId)) {
+                Rental rental = rentalRepository.createRental(customer, staff, inventory);
+                BigDecimal rentalRate = filmRepository.getRentalRate(inventoryId);
+                paymentRepository.createPayment(customer, staff, rental, rentalRate);
+                System.out.println("Inventory rented successfully");
+            } else {
+                System.out.println("Inventory is currently rented and not available");
+            }
+        });
     }
+
+
 }
 
 
